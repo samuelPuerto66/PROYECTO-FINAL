@@ -1,0 +1,14 @@
+{
+  "name": "puente-mysql-mongo",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node migrate.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "mongodb": "^7.0.0",
+    "mysql2": "^3.15.3",
+    "redis": "^5.10.0"
+  }
+}
