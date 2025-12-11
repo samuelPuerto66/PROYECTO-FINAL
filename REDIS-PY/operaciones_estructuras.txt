@@ -1,0 +1,57 @@
+# OPERACIONES DE ESTRUCTURAS DE DATOS EN REDIS
+
+Este documento lista las operaciones principales de las 4 estructuras de Redis utilizadas en el proyecto 'mongo_sistema', con ejemplos prácticos.
+
+---
+
+## 1. STRING (Cadenas y Contadores)
+
+Utilizada para tokens de sesión, contadores de visitas y caché de objetos serializados (JSON).
+
+| Comando | Sintaxis | Ejemplo de Uso Práctico | Descripción |
+| :--- | :--- | :--- | :--- |
+| SET | SET <key> <value> | SET visitas_home 150 | Establece un valor en una clave. |
+| GET | GET <key> | GET visitas_home | Recupera el valor de una clave. |
+| INCR | INCR <key> | INCR visitas_home | Incrementa el valor numérico de la clave en 1 (Usado para contadores). |
+| SETEX | SETEX <key> <seconds> <value> | SETEX sesion:user:1234 3600 "token_abc" | Establece un valor con un tiempo de expiración (TTL) en segundos (Usado para sesiones). |
+| TTL | TTL <key> | TTL sesion:user:1234 | Devuelve el tiempo de vida restante de la clave en segundos. |
+
+---
+
+## 2. HASH (Objetos y Caché de Perfiles)
+
+Utilizada para almacenar campos y valores discretos dentro de una única clave, ideal para la caché de perfiles de Doctores o Pacientes.
+
+| Comando | Sintaxis | Ejemplo de Uso Práctico | Descripción |
+| :--- | :--- | :--- | :--- |
+| HSET | HSET <key> <field> <value> [field value ...] | HSET doctor:d5f2a nombre "Dr. Pérez" especialidad "Cardiología" | Establece uno o más pares campo-valor en el hash. |
+| HGET | HGET <key> <field> | HGET doctor:d5f2a especialidad | Recupera el valor asociado a un campo específico. |
+| HGETALL | HGETALL <key> | HGETALL doctor:d5f2a | Recupera todos los campos y valores del hash (Usado para cargar el perfil completo). |
+| HINCRBY | HINCRBY <key> <field> <increment> | HINCRBY doctor:d5f2a citas_hoy 1 | Incrementa el valor numérico de un campo dentro del hash (Ej. contar citas del día). |
+
+---
+
+## 3. LIST (Colas de Tareas)
+
+Utilizada para implementar colas de tareas (FIFO o LIFO), como la gestión de notificaciones o recordatorios de citas.
+
+| Comando | Sintaxis | Ejemplo de Uso Práctico | Descripción |
+| :--- | :--- | :--- | :--- |
+| LPUSH | LPUSH <key> <value> [value ...] | LPUSH cola:recordatorios "cita:p101:d205" | Agrega uno o más elementos al inicio (izquierda) de la lista (LIFO: Last In, First Out). |
+| RPUSH | RPUSH <key> <value> [value ...] | RPUSH log:errores "Error DB 2025-01-01" | Agrega uno o más elementos al final (derecha) de la lista. |
+| LPOP | LPOP <key> | LPOP cola:recordatorios | Remueve y devuelve el primer elemento (más a la izquierda) de la lista. |
+| BRPOP | BRPOP <key> [key ...] <timeout> | BRPOP cola:recordatorios 0 | Bloquea la conexión hasta que haya un elemento disponible para extraer (útil para workers). |
+| LLEN | LLEN <key> | LLEN cola:recordatorios | Devuelve la longitud de la lista (cuántas tareas pendientes hay). |
+
+---
+
+## 4. ZSET (Sorted Sets - Conjuntos Ordenados)
+
+Utilizada para listas de clasificación o rankings, donde cada miembro tiene una puntuación asociada (score).
+
+| Comando | Sintaxis | Ejemplo de Uso Práctico | Descripción |
+| :--- | :--- | :--- | :--- |
+| ZADD | ZADD <key> <score> <member> [score member ...] | ZADD ranking:doctores 150 "Dr. Pérez" | Agrega un miembro con un puntaje específico (Usado para inicializar o actualizar el score). |
+| ZINCRBY | ZINCRBY <key> <increment> <member> | ZINCRBY ranking:doctores 1 "Dr. Pérez" | Incrementa la puntuación de un miembro por la cantidad especificada (Usado para actualizar el ranking en tiempo real). |
+| ZREVRANGE | ZREVRANGE <key> <start> <stop> [WITHSCORES] | ZREVRANGE ranking:doctores 0 9 WITHSCORES | Devuelve un rango de miembros ordenados por puntuación de forma descendente (el más alto primero). |
+| ZRANGE | ZRANGE <key> <start> <stop> [WITHSCORES] | ZRANGE ranking:doctores 0 0 | Devuelve un rango de miembros ordenados por puntuación de forma ascendente (el más bajo primero). |

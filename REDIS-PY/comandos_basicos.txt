@@ -1,0 +1,52 @@
+# -------------------------
+# COMANDOS BÁSICOS DE REDIS
+# -------------------------
+
+(STRING)
+> SET visitas_home 0
+OK
+> INCR visitas_home
+1
+> GET visitas_home
+1
+> SETEX sesion:user:1234 3600 "token_abc123"
+OK
+> TTL sesion:user:1234
+3588
+> DEL sesion:user:1234
+1
+
+(HASH)
+> HSET doctor:d5f2a nombre "Dr. Pérez" especialidad "Cardiología" citas_hoy 5
+3
+> HGETALL doctor:d5f2a
+nombre
+Dr. Pérez
+especialidad
+Cardiología
+citas_hoy
+5
+> HINCRBY doctor:d5f2a citas_hoy 1
+6
+
+(LIST)
+> LPUSH cola:recordatorios "cita:p101:d205"
+1
+> BRPOP cola:recordatorios 0
+cola:recordatorios
+cita:p101:d205
+> LLEN cola:recordatorios
+0
+
+(ZSET)
+> ZADD ranking:doctores 150 "Dr. Pérez"
+1
+> ZINCRBY ranking:doctores 1 "Dr. Pérez"
+151
+> ZREVRANGE ranking:doctores 0 9 WITHSCORES
+Dr. Pérez
+151
+
+
+
+6
