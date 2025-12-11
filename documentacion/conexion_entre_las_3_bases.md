@@ -41,4 +41,21 @@ Este patrón evita consultar MongoDB en cada petición de datos frecuentes (ej. 
 
 ### Caso 3: Colas Asíncronas (Redis para Tareas)
 
+
 * **Flujo:** Cuando se crea una cita en **MongoDB**, la ID de la cita se añade a una **Cola LIST** en **Redis** (`LPUSH cola:recordatorios`). Un proceso de fondo independiente consume (`BRPOP`) esta cola para enviar recordatorios por email o SMS.
+
+
+
+
+
+
+EJM CAPTURAS:
+
+<img width="1379" height="838" alt="image" src="https://github.com/user-attachments/assets/c875e3ea-f9f5-47d9-8015-ef7a67f80620" />
+
+
+<img width="639" height="516" alt="image" src="https://github.com/user-attachments/assets/70ee8a43-081e-4626-9a2c-e332fca672a0" />
+
+<img width="706" height="626" alt="image" src="https://github.com/user-attachments/assets/ace784b4-2a74-4f73-932f-8e5f62573d3a" />
+
+
